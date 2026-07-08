@@ -13,11 +13,16 @@ def hello_world():
 @app.route("/upload", methods=["POST"])
 def upload_file():
     check_directory()
-    for file in request.files.getlist("file"):
+    archivos = request.files.getlist("file")
+    if len(archivos) == 0:
+        return redirect("/")
+    for file in archivos:
+        if file.filename == "":
+            continue
         filename = secure_filename(file.filename)
         file.save(os.path.join("photos", filename))
-        return redirect("/")
-    
+    return redirect("/")
+
 def check_directory():
     if not os.path.exists("photos"):
         os.makedirs("photos")
